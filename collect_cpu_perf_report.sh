@@ -50,7 +50,7 @@ echo "***Collect software interrupt data. Now is $(date)***" >> $FILE
 for i in $(seq 1 6); do cat /proc/softirqs >> $FILE; echo >> $FILE; sleep 1; done
 echo -e '\n\n\n' >> $FILE
 
-# List top 10 thread used the most CPU resources
+# List top 20 thread used the most CPU resources
 echo "***List top 10 thread used the most CPU resources. Now is $(date)***" >> $FILE
 for i in $(seq 1 6); do ps H -eo user,pid,ppid,tid,time,%cpu,%mem,cmd --sort=-pcpu|head -n 20 >> $FILE; echo >> $FILE; sleep 1; done
 echo -e '\n\n\n' >> $FILE
