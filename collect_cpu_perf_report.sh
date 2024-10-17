@@ -14,6 +14,7 @@ which top 1> /dev/null || { echo "please install top command first"; exit 1; }
 which mpstat 1> /dev/null || { echo "please install mpstat command first"; exit 1; }
 which vmstat 1> /dev/null || { echo "please install vmstat command first"; exit 1; }
 which seq 1> /dev/null || { echo "please install seq command first"; exit 1; }
+which pidstat 1> /dev/null || { echo "please install pidstat command first"; exit 1; }
 
 echo "***CPU performance report collection will take approximately 1 minute to complete.  Now is $(date). please wait...***"
 
@@ -53,6 +54,11 @@ echo -e '\n\n\n' >> $FILE
 # List top 20 thread used the most CPU resources
 echo "***List top 10 thread used the most CPU resources. Now is $(date)***" >> $FILE
 for i in $(seq 1 6); do ps H -eo user,pid,ppid,tid,time,%cpu,%mem,cmd --sort=-pcpu|head -n 20 >> $FILE; echo >> $FILE; sleep 1; done
+echo -e '\n\n\n' >> $FILE
+
+# Check CPU resources used by threads
+echo "***Check CPU resources used by threads. Now is $(date)***" >> $FILE
+pidstat -w -u -t 1 5  >> $FILE || { echo "pidstat command execute failed"; exit 1; }
 echo -e '\n\n\n' >> $FILE
 echo "Successfully collected. Now is $(date)" >> $FILE
 
