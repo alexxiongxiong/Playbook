@@ -3,7 +3,7 @@
 #Date: 2024/10/23
 #Author: Alex Xiong
 #Mail: 
-#Function: This script is used to keep the latest 30 images in each repo and delete all other old images
+#Function: This script is used to maintain the images in the ACR. Keep the latest 30 images in each repo and delete all other old images
 #Version: V 1.0
 
 REGISTRY=testacr;
