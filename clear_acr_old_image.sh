@@ -18,8 +18,8 @@ touch ${LOGFILE}
 echo "Start to run the script at $(date)" >> ${LOGFILE}
 
 #Precheck before running the script
-which jq || echo "jq is not installed on your machine, please install it" 
-which az || echo "az is not installed on your machine, please install it"
+which jq &> /dev/null || echo "jq is not installed on your machine, please install it" 
+which az &> /dev/null || echo "az is not installed on your machine, please install it"
 
 # Login  ACR
 az login --identity &>> ${LOGFILE} && echo "az Login succeed" || { echo "az login failed"; exit 1; };
