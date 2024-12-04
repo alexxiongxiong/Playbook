@@ -25,7 +25,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: login-$nodeName
-  namespace: default
+  namespace: kube-system
 spec:
   containers:
   - command:
@@ -67,6 +67,6 @@ if ($LASTEXITCODE -eq 0) {
 }
 
 # Guide the user to log in to the AKS node
-Write-Host "`nThe Pod login-$nodeName has been created in your default namespace."
+Write-Host "`nThe Pod login-$nodeName has been created in your kube-system namespace."
 Write-Host "`nPlease run the following command to log in to the worker node:"
-Write-Host "kubectl exec -ti login-$nodeName -n default -- bash"
+Write-Host "kubectl exec -ti login-$nodeName -n kube-system -- bash"
