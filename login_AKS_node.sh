@@ -18,7 +18,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: login-${nodeName}
-  namespace: default
+  namespace: kube-system
 spec:
   containers:
   - command:
@@ -55,4 +55,4 @@ EOF
 sleep 10;
 
 # guide user to login AKS node via new-created pod
-echo -e "\nThe Pod login-${nodeName} has been created in your default namespace. \n\nplease run \"kubectl exec -ti login-${nodeName} -n default -- bash\" to login worker node\n";
+echo -e "\nThe Pod login-${nodeName} has been created in your kube-system namespace. \n\nplease run \"kubectl exec -ti login-${nodeName} -n kube-system -- bash\" to login worker node\n";
