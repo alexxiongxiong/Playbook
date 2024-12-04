@@ -10,7 +10,7 @@ echo -e "\n";
 read -p "please input your node name which you would like to login: " nodeName
 
 # evaluate if the user's input is valid; if no, exit the script
-echo $(kubectl get node -o wide) | grep -w $nodeName 1>/dev/null || { echo "You input an invalid AKS node name. Quit the script"; exit 1; }
+echo $(kubectl get node -o jsonpath='{.items[*].metadata.name}') | grep -w $nodeName 1>/dev/null || { echo "You input an invalid AKS node name. Quit the script"; exit 1; }
 
 # start to deploy previleged pod used to login worker node
 kubectl apply -f - <<EOF
