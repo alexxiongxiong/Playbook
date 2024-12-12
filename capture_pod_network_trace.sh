@@ -60,11 +60,11 @@ spec:
     kubernetes.io/hostname: ${nodeName}
 EOF
 
-echo -e "The temporary Pod login-${nodeName} is being created in your kube-system namespace. Please wait 30 seconds for the Pod to be ready.\n"
+echo "The temporary Pod login-${nodeName} is being created in your kube-system namespace. Please wait 30 seconds for the Pod to be ready."
 
 # Please wait 30 seconds for the Pod to be ready
 kubectl wait --namespace kube-system --for=condition=Ready pod/login-${nodeName} --timeout=30s || { echo "Failed to deploy login pod. Exiting."; exit 1; }
-
+echo -e "\n"
 
 # Get tracking parameters
 read -p "Please enter the IP you want to track (e.g., 169.254.169.254): " hostIP
@@ -80,8 +80,10 @@ kubectl exec -ti login-${nodeName} -n kube-system -- bash -c "
 # download network trace file
 echo -e "\nDownloading network trace file..."
 kubectl cp "${namespace}/login-${nodeName}:/tmp/trace-${hostIP}.pcap" "./trace-${hostIP}.pcap" || { echo "Failed to download network trace file."; exit 1; }
+echo -e "\nThe network trace has been downloaded locally. The file path is $(pwd)/trace-${hostIP}.pcap"
 
 # delete the temporary Pod
 kubectl delete pod login-${nodeName} -n kube-system --ignore-not-found
 
-echo -e "\nThe network trace has been downloaded locally. The file path is $(pwd)/trace-${hostIP}.pcap"
+echo -e "\nThe script has been successfully exectued. Please run "ls -al $(pwd)/trace-${hostIP}.pcap" to check the trace file locally." 
+
