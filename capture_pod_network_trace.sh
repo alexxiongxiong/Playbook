@@ -21,7 +21,7 @@ nodeName=$(kubectl get pod -n $namespace $podName -o jsonpath='{.spec.nodeName}'
 
 
 # Deploy a temporary Pod
-echo "Deploying a temporary pod on node: $nodeName"
+echo -e "\nDeploying a temporary pod on node: $nodeName"
 
 kubectl apply -f - <<EOF
 apiVersion: v1
@@ -60,26 +60,28 @@ spec:
     kubernetes.io/hostname: ${nodeName}
 EOF
 
-echo "The temporary Pod login-${nodeName} is being created in your kube-system namespace. Please wait 30 seconds for the Pod to be ready."
+echo -e "The temporary Pod login-${nodeName} is being created in your kube-system namespace. Please wait 30 seconds for the Pod to be ready.\n"
 
 # Please wait 30 seconds for the Pod to be ready
 kubectl wait --namespace kube-system --for=condition=Ready pod/login-${nodeName} --timeout=30s || { echo "Failed to deploy login pod. Exiting."; exit 1; }
+
 
 # Get tracking parameters
 read -p "Please enter the IP you want to track (e.g., 169.254.169.254): " hostIP
 read -p "How many seconds you would like to track: " secondsNumber
 
-
 # Capturing network trace
-echo "Capturing network trace for $secondsNumber seconds..."
+echo -e "\nCapturing network trace for $secondsNumber seconds..."
 kubectl exec -ti login-${nodeName} -n kube-system -- bash -c "
   rm /tmp/trace-${hostIP}.pcap &>/dev/null || true
   timeout ${secondsNumber}s tcpdump -i any host $hostIP -w /tmp/trace-${hostIP}.pcap -vvn || true
 "
 
 # download network trace file
-echo "Downloading network trace file..."
+echo -e "\nDownloading network trace file..."
 kubectl cp "${namespace}/login-${nodeName}:/tmp/trace-${hostIP}.pcap" "./trace-${hostIP}.pcap" || { echo "Failed to download network trace file."; exit 1; }
 
 # delete the temporary Pod
 kubectl delete pod login-${nodeName} -n kube-system --ignore-not-found
+
+echo -e "\nThe network trace has been downloaded locally. The file path is $pwd/trace-${hostIP}.pcap"
