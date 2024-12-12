@@ -84,4 +84,4 @@ kubectl cp "${namespace}/login-${nodeName}:/tmp/trace-${hostIP}.pcap" "./trace-$
 # delete the temporary Pod
 kubectl delete pod login-${nodeName} -n kube-system --ignore-not-found
 
-echo -e "\nThe network trace has been downloaded locally. The file path is $pwd/trace-${hostIP}.pcap"
+echo -e "\nThe network trace has been downloaded locally. The file path is $(pwd)/trace-${hostIP}.pcap"
