@@ -78,7 +78,7 @@ kubectl exec -ti login-${nodeName} -n kube-system -- bash -c "
 "
 
 # download network trace file
-echo -e "Capturing has been done. \nStart Downloading network trace file..."
+echo -e "Capturing has been done. \n\nStart Downloading network trace file..."
 kubectl cp "${namespace}/login-${nodeName}:/tmp/trace-${hostIP}.pcap" "./trace-${hostIP}.pcap" || { echo "Failed to download network trace file."; exit 1; }
 echo -e "The network trace has been downloaded locally. The file path is $(pwd)/trace-${hostIP}.pcap\n"
 
