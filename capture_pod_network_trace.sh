@@ -1,4 +1,9 @@
 #!/bin/bash
+#Date: 2024/12/11
+#Author: Alex Xiong
+#Function: Used to capture the network trace for k8s pod. Only support IP-based trace.
+#Version: V 1.0
+
 set -euo pipefail
 
 # Check if the necessary tools are installed
@@ -16,7 +21,7 @@ nodeName=$(kubectl get pod -n $namespace $podName -o jsonpath='{.spec.nodeName}'
 
 
 # Deploy a temporary Pod
-echo "Deploying a privileged pod on node: $nodeName"
+echo "Deploying a temporary pod on node: $nodeName"
 
 kubectl apply -f - <<EOF
 apiVersion: v1
@@ -55,13 +60,13 @@ spec:
     kubernetes.io/hostname: ${nodeName}
 EOF
 
-echo "The Pod login-${nodeName} is being created in your kube-system namespace. Please wait 30 seconds for the Pod to be ready."
+echo "The temporary Pod login-${nodeName} is being created in your kube-system namespace. Please wait 30 seconds for the Pod to be ready."
 
 # Please wait 30 seconds for the Pod to be ready
 kubectl wait --namespace kube-system --for=condition=Ready pod/login-${nodeName} --timeout=30s || { echo "Failed to deploy login pod. Exiting."; exit 1; }
 
 # Get tracking parameters
-read -p "Please enter the IP you want to track (e.g., 8.8.8.8): " hostIP
+read -p "Please enter the IP you want to track (e.g., 169.254.169.254): " hostIP
 read -p "How many seconds you would like to track: " secondsNumber
 
 
