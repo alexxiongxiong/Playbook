@@ -7,6 +7,7 @@ Native PowerShell translation of find-aks-istio-request-resources.sh.
 Parameters take precedence over the original environment variables:
 HOST, LB_IP, SCHEME, PORT, REQ_METHOD, REQ_PATH, GW_NS, GW,
 ISTIO_ROOT_NS, ISTIO_CONTROL_PLANE_NS, ISTIO_REVISION, and DUMP_XDS.
+The script also lists all pods in the Istio control plane namespace.
 
 .PARAMETER HostName
 Request host name. Maps to HOST. Required.
@@ -103,7 +104,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $script:BoundParameterNames = @($PSBoundParameters.Keys)
-$script:ScriptVersion = '2026.08.11.2'
+$script:ScriptVersion = '2026.08.13.1'
 
 function Write-Stderr {
     param(
@@ -984,6 +985,29 @@ if (-not $dnsLookupCompleted) {
     else {
         Write-WarnLine 'Neither Resolve-DnsName nor nslookup is installed; skipping DNS lookup'
     }
+}
+
+Write-Section -Name 'Istio Control Plane Pods'
+$istioControlPlanePodsResult = Invoke-NativeCommand `
+    -CommandName 'kubectl' `
+    -ArgumentList @(
+        'get', 'pod',
+        '-n', $EffectiveIstioControlPlaneNamespace,
+        '-o', 'wide'
+    ) `
+    -AllowFailure
+
+if ($istioControlPlanePodsResult.ExitCode -eq 0) {
+    if (-not [string]::IsNullOrWhiteSpace($istioControlPlanePodsResult.Text)) {
+        Write-Output $istioControlPlanePodsResult.Text.TrimEnd()
+    }
+}
+else {
+    Write-WarnLine (
+        "Unable to list pods in Istio control plane namespace '{0}': {1}" -f `
+            $EffectiveIstioControlPlaneNamespace,
+            $istioControlPlanePodsResult.Command
+    )
 }
 
 Write-Section -Name 'Collecting cluster resources'
